@@ -23,3 +23,20 @@ The goal of this project is to understand UART communication and implement its t
 
 ## Status
 Project setup completed. Verilog implementation will be added step by step.
+## Simulation Results
+
+### UART Transmitter Verification
+The UART transmitter was simulated using a Verilog testbench in EDA Playground.
+
+#### Test cases used
+- First input data: `8'hAC`
+- Second input data: `8'hD2`
+
+#### Observations
+- `tx_start` is asserted to begin transmission.
+- `tx_busy` goes high during active transmission and returns low after completion.
+- `tx` serially transmits the UART frame bits.
+- The transmitter returns to idle state after the frame is sent.
+
+### Waveform Output
+![UART TX Waveform](uart_tx_waveform.png)
