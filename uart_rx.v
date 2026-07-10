@@ -12,33 +12,33 @@ module uart_rx (
 
     always @(posedge clk or posedge rst) begin
         if (rst) begin
-            data_out   <= 8'b00000000;
-            rx_done    <= 1'b0;
-            bit_index  <= 4'd0;
-            rx_shift   <= 8'b00000000;
-            receiving  <= 1'b0;
+            data_out  <= 8'b00000000;
+            rx_done   <= 1'b0;
+            bit_index <= 4'd0;
+            rx_shift  <= 8'b00000000;
+            receiving <= 1'b0;
         end
         else begin
-            rx_done <= 1'b0;   // default: pulse only when a byte is fully received
+            rx_done <= 1'b0;   // default: pulse only for 1 cycle when byte received
 
-            // Detect start bit and begin reception
+            // Start bit detection
             if (!receiving && rx == 1'b0) begin
                 receiving <= 1'b1;
                 bit_index <= 4'd0;
             end
 
-            // If currently receiving, capture incoming bits
+            // Receive 8 data bits
             else if (receiving) begin
-                if (bit_index < 4'd8) begin
-                    rx_shift[bit_index] <= rx;
-                    bit_index <= bit_index + 1;
-                end
-                else begin
-                    // After receiving 8 data bits, store output and finish
-                    data_out  <= rx_shift;
+                rx_shift[bit_index] <= rx;
+
+                if (bit_index == 4'd7) begin
+                    data_out  <= {rx, rx_shift[6:0]};
                     rx_done   <= 1'b1;
                     receiving <= 1'b0;
                     bit_index <= 4'd0;
+                end
+                else begin
+                    bit_index <= bit_index + 1;
                 end
             end
         end
